@@ -1,0 +1,19 @@
+.container {
+  @apply max-w-7xl mx-auto p-6;
+}
+
+.header {
+  @apply bg-white rounded-xl shadow-lg p-6 mb-6;
+}
+
+.btn {
+  @apply px-4 py-2 rounded-lg font-medium transition-all duration-200;
+}
+
+.btnPrimary {
+  @apply bg-blue-500 text-white hover:bg-blue-600;
+}
+
+.btnSecondary {
+  @apply bg-gray-200 text-gray-700 hover:bg-gray-300;
+}
