@@ -68,11 +68,37 @@ const ReactQuill = dynamic(
     SizeStyle.whitelist = ['8pt', '9pt', '10pt', '11pt', '12pt', '14pt', '16pt', '18pt', '20pt', '22pt', '24pt', '26pt', '28pt', '36pt', '48pt', '72pt']
     Quill.register(SizeStyle, true)
 
+    // 4. Register custom fonts - using class-based approach
+    const Font = Quill.import('formats/font')
+    Font.whitelist = [
+      // Google Fonts - Modern Sans-Serif
+      'inter', 'roboto', 'open-sans', 'lato', 'montserrat', 'oswald',
+      'source-sans', 'raleway', 'pt-sans', 'poppins', 'ubuntu', 'mukta',
+      'noto-sans', 'rubik', 'work-sans', 'karla', 'libre-franklin',
+      'fira-sans', 'archivo', 'dm-sans', 'quicksand', 'cabin', 'hind',
+      'josefin-sans', 'oxygen', 'titillium-web', 'nunito-sans', 'barlow',
+      'heebo', 'manrope', 'nunito',
+
+      // Google Fonts - Serif
+      'merriweather', 'playfair', 'lora', 'libre-baskerville', 'tinos',
+      'crimson-text', 'eb-garamond', 'pt-serif', 'ibm-plex-serif',
+      'bitter', 'cormorant',
+
+      // Google Fonts - Monospace
+      'courier-prime', 'space-mono', 'ibm-plex-mono', 'inconsolata',
+      'ibm-plex-sans',
+
+      // Common Word font aliases
+      'arial', 'times', 'times-new-roman', 'calibri', 'cambria',
+      'georgia', 'verdana', 'courier', 'courier-new', 'palatino'
+    ]
+    Quill.register(Font, true)
+
     // Define the modules object
     const modules = {
       toolbar: [
         [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-        [{ 'font': [] }],
+        [{ 'font': Font.whitelist }],
         [{ 'size': ['8pt', '9pt', '10pt', '11pt', '12pt', '14pt', '16pt', '18pt', '20pt', '22pt', '24pt', '26pt', '28pt', '36pt', '48pt', '72pt'] }],
         ['bold', 'italic', 'underline', 'strike'],
 
@@ -89,7 +115,7 @@ const ReactQuill = dynamic(
       ],
       imageResize: {
         parchment: Parchment,
-        modules: ['Resize', 'DisplaySize', 'Toolbar'] // Toolbar adds align buttons (float)
+        modules: ['Resize', 'DisplaySize', 'Toolbar'] // Toolbar adds alignment buttons (CSS will convert float to proper alignment)
       },
       clipboard: {
         matchVisual: false,
@@ -301,9 +327,28 @@ const ReactQuill = dynamic(
                 if (node.hasAttribute('height')) {
                   attributes.height = node.getAttribute('height')
                 }
+
+                // Handle style attribute and convert float to proper alignment
                 if (node.hasAttribute('style')) {
-                  attributes.style = node.getAttribute('style')
+                  let style = node.getAttribute('style') || ''
+
+                  // Convert float-based alignment to display + margin
+                  if (style.includes('float: left') || style.includes('float:left')) {
+                    style = style.replace(/float:\s*left;?/g, 'display: block;')
+                    style = style.includes('margin-left') ? style : style + ' margin-left: 0; margin-right: auto;'
+                  } else if (style.includes('float: right') || style.includes('float:right')) {
+                    style = style.replace(/float:\s*right;?/g, 'display: block;')
+                    style = style.includes('margin-left') ? style : style + ' margin-left: auto; margin-right: 0;'
+                  } else if (style.includes('display: block') && !style.includes('float')) {
+                    // Center alignment (display: block without float)
+                    if (!style.includes('margin-left')) {
+                      style += ' margin-left: auto; margin-right: auto;'
+                    }
+                  }
+
+                  attributes.style = style
                 }
+
                 if (node.hasAttribute('alt')) {
                   attributes.alt = node.getAttribute('alt')
                 }

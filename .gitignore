@@ -35,7 +35,9 @@ next-env.d.ts
 
 # Data
 data/messages.json
+example-data/
 
 # Uploads
 public/uploads/*
 !public/uploads/.gitkeep
+
