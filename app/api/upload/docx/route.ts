@@ -18,21 +18,25 @@ export async function POST(req: NextRequest) {
     const buffer = Buffer.from(arrayBuffer)
     // === END OF FIX ===
 
-    // 3. Process with Mammoth, passing the new Buffer
+    // 3. Process with Mammoth with improved highlight support
     const { html, messages } = await convertDocxToHtml(buffer)
+
+    // Debug: Log the HTML to see what's being generated
+    console.log('Generated HTML:', html.substring(0, 500))
+    console.log('Mammoth messages:', messages)
 
     return NextResponse.json({ html, messages }, { status: 200 })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Docx conversion error:', error)
-    
+
     let errorMessage = 'Failed to convert document'
-    if (error.code === 'MODULE_NOT_FOUND') {
+    if (error?.code === 'MODULE_NOT_FOUND') {
       errorMessage = "Server error: 'mammoth' library is not installed."
-    } else if (error.message) {
+    } else if (error?.message) {
       errorMessage = error.message
     }
-    
+
     return NextResponse.json({ error: errorMessage }, { status: 500 })
   }
 }

@@ -1,42 +1,9 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
-
-// 1. Define the "Reference Width" from our new .ql-editor CSS
-const REFERENCE_WIDTH_PX = 624
+import { useState } from 'react'
 
 export function Preview({ pane }) {
   const [aspect, setAspect] = useState<'portrait' | 'landscape'>('portrait')
-  const [scale, setScale] = useState(1) // State to hold the scale ratio
-  const containerRef = useRef<HTMLDivElement>(null) // Ref to measure the container
-  
-  // Effect to calculate and apply scaling
-  useEffect(() => {
-    function updateScale() {
-      if (containerRef.current) {
-        // Measure the available width of the scrolling container
-        const availableWidth = containerRef.current.clientWidth
-        
-        // Calculate the scale ratio
-        const scaleRatio = availableWidth / REFERENCE_WIDTH_PX
-        
-        // Set the scale
-        setScale(scaleRatio)
-      }
-    }
-
-    // Calculate on mount and on window resize
-    updateScale()
-    window.addEventListener('resize', updateScale)
-    
-    // Also recalculate when the pane (and its content) changes
-    const timeout = setTimeout(updateScale, 50); // Small delay for content to render
-
-    return () => {
-      window.removeEventListener('resize', updateScale)
-      clearTimeout(timeout)
-    }
-  }, [aspect, pane]) // Re-run when aspect or pane changes
 
   const backgroundStyle = pane?.background?.type === 'image'
     ? { backgroundImage: `url(${pane.background.value})` }
@@ -83,19 +50,12 @@ export function Preview({ pane }) {
             <div className="bg-white/95 backdrop-blur rounded h-full overflow-hidden flex flex-col ql-snow">
               {/* This is the new viewport, we measure this. */}
               <div
-                ref={containerRef}
-                className="flex-1 p-3 overflow-y-auto" // Added padding to match PaneViewer
+                className="flex-1 p-3 overflow-y-auto overflow-x-hidden"
               >
-                {/* This is the scaled container. */}
-                <div
-                  style={{
-                    width: `${REFERENCE_WIDTH_PX}px`,
-                    transform: `scale(${scale})`,
-                    transformOrigin: 'top left',
-                  }}
-                >
+                {/* Content container - fully responsive, never exceeds viewport */}
+                <div className="w-full max-w-full">
                   {/* 2. We use ql-editor to get 1:1 styles */}
-                  <div 
+                  <div
                     className="ql-editor"
                     dangerouslySetInnerHTML={{ __html: pane?.content?.html || '' }}
                   />

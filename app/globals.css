@@ -51,6 +51,124 @@
 .ql-editor {
   padding-top: 12px;
   padding-bottom: 12px;
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Support for alignment - let inline styles work naturally */
+.ql-editor p[style*="text-align"],
+.ql-editor h1[style*="text-align"],
+.ql-editor h2[style*="text-align"],
+.ql-editor h3[style*="text-align"],
+.ql-editor h4[style*="text-align"],
+.ql-editor h5[style*="text-align"],
+.ql-editor h6[style*="text-align"],
+.ql-editor li[style*="text-align"] {
+  /* The inline style will be applied directly by the browser */
+}
+
+/* Ensure all content within editor never exceeds viewport */
+/* Images with explicit dimensions preserve them, but still constrain to viewport */
+.ql-editor img {
+  max-width: 100% !important;
+}
+
+/* Only apply auto height to images without explicit height */
+.ql-editor img:not([style*="height"]) {
+  height: auto !important;
+}
+
+/* Prevent images from stacking when using float alignment */
+.ql-editor p:has(img) {
+  clear: both;
+}
+
+.ql-editor table {
+  max-width: 100%;
+  table-layout: auto;
+}
+
+.ql-editor iframe,
+.ql-editor video {
+  max-width: 100%;
+}
+
+/* Font size styles - Word-like point sizes */
+.ql-editor .ql-size-8pt { font-size: 8pt; }
+.ql-editor .ql-size-9pt { font-size: 9pt; }
+.ql-editor .ql-size-10pt { font-size: 10pt; }
+.ql-editor .ql-size-11pt { font-size: 11pt; }
+.ql-editor .ql-size-12pt { font-size: 12pt; }
+.ql-editor .ql-size-14pt { font-size: 14pt; }
+.ql-editor .ql-size-16pt { font-size: 16pt; }
+.ql-editor .ql-size-18pt { font-size: 18pt; }
+.ql-editor .ql-size-20pt { font-size: 20pt; }
+.ql-editor .ql-size-22pt { font-size: 22pt; }
+.ql-editor .ql-size-24pt { font-size: 24pt; }
+.ql-editor .ql-size-26pt { font-size: 26pt; }
+.ql-editor .ql-size-28pt { font-size: 28pt; }
+.ql-editor .ql-size-36pt { font-size: 36pt; }
+.ql-editor .ql-size-48pt { font-size: 48pt; }
+.ql-editor .ql-size-72pt { font-size: 72pt; }
+
+/* Font size picker dropdown labels */
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="8pt"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="8pt"]::before { content: '8'; }
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="9pt"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="9pt"]::before { content: '9'; }
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="10pt"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="10pt"]::before { content: '10'; }
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="11pt"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="11pt"]::before { content: '11'; }
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="12pt"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="12pt"]::before { content: '12'; }
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="14pt"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="14pt"]::before { content: '14'; }
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="16pt"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="16pt"]::before { content: '16'; }
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="18pt"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="18pt"]::before { content: '18'; }
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="20pt"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="20pt"]::before { content: '20'; }
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="22pt"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="22pt"]::before { content: '22'; }
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="24pt"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="24pt"]::before { content: '24'; }
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="26pt"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="26pt"]::before { content: '26'; }
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="28pt"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="28pt"]::before { content: '28'; }
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="36pt"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="36pt"]::before { content: '36'; }
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="48pt"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="48pt"]::before { content: '48'; }
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="72pt"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="72pt"]::before { content: '72'; }
+
+/* Highlight classes for imported DOCX files */
+.highlight-yellow {
+  background-color: #ffff00;
+}
+
+.highlight-green {
+  background-color: #00ff00;
+}
+
+.highlight-cyan {
+  background-color: #00ffff;
+}
+
+.highlight-magenta {
+  background-color: #ff00ff;
+}
+
+.highlight-blue {
+  background-color: #0000ff;
+}
+
+.highlight-red {
+  background-color: #ff0000;
 }
 
 /* Custom scrollbar */

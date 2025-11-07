@@ -3,48 +3,11 @@
 import { useState, useEffect, useRef } from 'react'
 import { ConnectionStatus } from './ConnectionStatus'
 
-// 1. Define the "Reference Width" from our new .ql-editor CSS
-// 65ch is roughly 624px (assuming 1ch ~ 9.6px)
-// We use 624 as our pixel-perfect reference.
-const REFERENCE_WIDTH_PX = 624
-
 export default function DisplayBoard({ initialData }: { initialData: any }) {
   const [panes, setPanes] = useState(initialData?.panes || [])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
-  const [scale, setScale] = useState(1) // State to hold the scale ratio
   const timerRef = useRef<NodeJS.Timeout>()
-
-  // Ref to measure the container we are scaling *into*
-  const containerRef = useRef<HTMLDivElement>(null)
-  
-  // Effect to calculate and apply scaling
-  useEffect(() => {
-    function updateScale() {
-      if (containerRef.current) {
-        // Measure the available width of the scrolling container
-        const availableWidth = containerRef.current.clientWidth
-        
-        // Calculate the scale ratio
-        const scaleRatio = availableWidth / REFERENCE_WIDTH_PX
-        
-        // Set the scale
-        setScale(scaleRatio)
-      }
-    }
-
-    // Calculate on mount and on window resize
-    updateScale()
-    window.addEventListener('resize', updateScale)
-    
-    // Also recalculate when the pane (and its content) changes
-    const timeout = setTimeout(updateScale, 50); // Small delay for content to render
-
-    return () => {
-      window.removeEventListener('resize', updateScale)
-      clearTimeout(timeout)
-    }
-  }, [currentIndex, panes]) // Re-run when pane changes
 
   useEffect(() => {
     if (panes.length > 0) {
@@ -121,24 +84,12 @@ export default function DisplayBoard({ initialData }: { initialData: any }) {
           <div 
             className="bg-white/95 backdrop-blur rounded-xl shadow-2xl h-full flex flex-col overflow-hidden ql-snow"
           >
-            {/* This is the new viewport, we measure this.
-                It has the padding and handles scrolling.
-             */}
-            <div
-              ref={containerRef}
-              className="flex-1 p-6 overflow-y-auto"
-            >
-              {/* This is the scaled container. */}
-              <div
-                style={{
-                  width: `${REFERENCE_WIDTH_PX}px`,
-                  transform: `scale(${scale})`,
-                  transformOrigin: 'top left',
-                }}
-              >
+            {/* Content viewport - fully responsive, never exceeds viewport */}
+            <div className="flex-1 p-6 overflow-y-auto overflow-x-hidden">
+              <div className="w-full max-w-full">
                 {/* 2. USE .ql-editor to match the editor's styles */}
-                <div 
-                  className="ql-editor" 
+                <div
+                  className="ql-editor"
                   dangerouslySetInnerHTML={{ __html: currentPane?.content?.html || '' }}
                 />
               </div>

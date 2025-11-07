@@ -23,13 +23,10 @@ export function PaneEditor({ pane, onSave, onClose }) {
     if (quillRef.current) {
       const editor = quillRef.current.getEditor();
       if (editor) {
-          // Get the Quill constructor from the *editor instance*
-          const Quill = editor.constructor; 
-          
-          // We are now safe to use `document` and `Quill`
-          const tempQuill = new Quill(document.createElement('div'));
-          tempQuill.clipboard.dangerouslyPasteHTML(0, html);
-          return tempQuill.getContents();
+          // Use the editor's clipboard directly to ensure custom matchers are applied
+          // This preserves our alignment, highlight, and other custom formatting
+          const delta = editor.clipboard.convert(html);
+          return delta;
       }
     }
     return null;
