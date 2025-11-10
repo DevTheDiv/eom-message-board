@@ -3,10 +3,11 @@
 import { useState, useRef, useEffect } from 'react'
 
 // Fixed render dimensions - this is the "king" size that everything renders at
-const PORTRAIT_WIDTH = 1080
-const PORTRAIT_HEIGHT = 1920
-const LANDSCAPE_WIDTH = 1920
-const LANDSCAPE_HEIGHT = 1080
+// Using 540x960 (half of 1080x1920) for comfortable editing - scales up beautifully on display
+const PORTRAIT_WIDTH = 540
+const PORTRAIT_HEIGHT = 960
+const LANDSCAPE_WIDTH = 960
+const LANDSCAPE_HEIGHT = 540
 
 export function Preview({ pane }) {
   const [aspect, setAspect] = useState<'portrait' | 'landscape'>('portrait')
@@ -63,7 +64,7 @@ export function Preview({ pane }) {
       <div className="bg-gray-900 rounded-lg p-4">
         <div
           ref={containerRef}
-          className={`w-full ${isPortrait ? 'aspect-[9/16]' : 'aspect-video'} relative`}
+          className={`w-full ${isPortrait ? 'aspect-[9/16]' : 'aspect-video'} relative flex items-center justify-center`}
           style={{ overflow: 'hidden' }}
         >
           {/* Fixed-size content that gets scaled */}
@@ -72,24 +73,21 @@ export function Preview({ pane }) {
               width: `${fixedWidth}px`,
               height: `${fixedHeight}px`,
               transform: `scale(${scale})`,
-              transformOrigin: 'top left',
-              position: 'absolute',
-              top: 0,
-              left: 0,
+              transformOrigin: 'center center',
               ...backgroundStyle
             }}
             className="flex flex-col"
           >
             {pane?.title && (
-              <div className="bg-black/70 backdrop-blur-sm p-8 text-center">
-                <h1 className="text-4xl font-bold text-white">{pane.title}</h1>
+              <div className="bg-black/70 backdrop-blur-sm p-4 text-center">
+                <h1 className="text-2xl font-bold text-white">{pane.title}</h1>
               </div>
             )}
 
             {/* Content container */}
-            <div className="flex-1 min-h-0 p-8">
-              <div className="bg-white/95 backdrop-blur rounded-xl shadow-2xl h-full flex flex-col overflow-hidden ql-snow">
-                <div className="flex-1 p-6 overflow-y-auto overflow-x-hidden">
+            <div className="flex-1 min-h-0 p-4">
+              <div className="bg-white/95 backdrop-blur rounded-lg shadow-2xl h-full flex flex-col overflow-hidden ql-snow">
+                <div className="flex-1 p-3 overflow-y-auto overflow-x-hidden">
                   <div className="w-full max-w-full">
                     <div
                       className="ql-editor"

@@ -4,8 +4,9 @@ import { useState, useEffect, useRef } from 'react'
 import { ConnectionStatus } from './ConnectionStatus'
 
 // Fixed render dimensions - matches Preview.tsx (the "king")
-const PORTRAIT_WIDTH = 1080
-const PORTRAIT_HEIGHT = 1920
+// Using 540x960 for comfortable editing - scales up beautifully on display
+const PORTRAIT_WIDTH = 540
+const PORTRAIT_HEIGHT = 960
 
 export default function DisplayBoard({ initialData }: { initialData: any }) {
   const [panes, setPanes] = useState(initialData?.panes || [])
@@ -16,14 +17,15 @@ export default function DisplayBoard({ initialData }: { initialData: any }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [scale, setScale] = useState(1)
 
-  // Calculate scale to fit screen
+  // Calculate scale to fill entire screen (not maintaining aspect ratio container)
   useEffect(() => {
     const updateScale = () => {
       if (!containerRef.current) return
 
-      const containerRect = containerRef.current.getBoundingClientRect()
-      const scaleX = containerRect.width / PORTRAIT_WIDTH
-      const scaleY = containerRect.height / PORTRAIT_HEIGHT
+      // Use window dimensions to fill entire screen
+      const scaleX = window.innerWidth / PORTRAIT_WIDTH
+      const scaleY = window.innerHeight / PORTRAIT_HEIGHT
+      // Use min to maintain aspect ratio while filling screen
       const newScale = Math.min(scaleX, scaleY)
 
       setScale(newScale)
@@ -97,7 +99,7 @@ export default function DisplayBoard({ initialData }: { initialData: any }) {
     return (
       <div
         ref={containerRef}
-        className="relative w-full h-screen bg-black"
+        className="relative w-full h-screen bg-black flex items-center justify-center"
         style={{ overflow: 'hidden' }}
       >
         <div
@@ -105,16 +107,13 @@ export default function DisplayBoard({ initialData }: { initialData: any }) {
             width: `${PORTRAIT_WIDTH}px`,
             height: `${PORTRAIT_HEIGHT}px`,
             transform: `scale(${scale})`,
-            transformOrigin: 'top left',
-            position: 'absolute',
-            top: 0,
-            left: 0,
+            transformOrigin: 'center center',
           }}
           className="flex items-center justify-center text-white"
         >
-          <div className="text-center p-8">
-            <h1 className="text-4xl font-bold mb-4">No messages to display</h1>
-            <p className="text-xl opacity-80">Please add messages in the admin panel</p>
+          <div className="text-center p-4">
+            <h1 className="text-2xl font-bold mb-2">No messages to display</h1>
+            <p className="text-base opacity-80">Please add messages in the admin panel</p>
           </div>
         </div>
       </div>
@@ -129,7 +128,7 @@ export default function DisplayBoard({ initialData }: { initialData: any }) {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-screen"
+      className="relative w-full h-screen flex items-center justify-center"
       style={{ overflow: 'hidden' }}
     >
       <ConnectionStatus />
@@ -140,10 +139,7 @@ export default function DisplayBoard({ initialData }: { initialData: any }) {
           width: `${PORTRAIT_WIDTH}px`,
           height: `${PORTRAIT_HEIGHT}px`,
           transform: `scale(${scale})`,
-          transformOrigin: 'top left',
-          position: 'absolute',
-          top: 0,
-          left: 0,
+          transformOrigin: 'center center',
           ...backgroundStyle
         }}
         className={`flex flex-col transition-opacity duration-1000 ${
@@ -151,15 +147,15 @@ export default function DisplayBoard({ initialData }: { initialData: any }) {
         }`}
       >
         {currentPane?.title && (
-          <div className="bg-black/70 backdrop-blur-sm p-8 text-center">
-            <h1 className="text-4xl font-bold text-white">{currentPane.title}</h1>
+          <div className="bg-black/70 backdrop-blur-sm p-4 text-center">
+            <h1 className="text-2xl font-bold text-white">{currentPane.title}</h1>
           </div>
         )}
 
         {/* Content container - matches Preview exactly */}
-        <div className="flex-1 min-h-0 p-8">
-          <div className="bg-white/95 backdrop-blur rounded-xl shadow-2xl h-full flex flex-col overflow-hidden ql-snow">
-            <div className="flex-1 p-6 overflow-y-auto overflow-x-hidden">
+        <div className="flex-1 min-h-0 p-4">
+          <div className="bg-white/95 backdrop-blur rounded-lg shadow-2xl h-full flex flex-col overflow-hidden ql-snow">
+            <div className="flex-1 p-3 overflow-y-auto overflow-x-hidden">
               <div className="w-full max-w-full">
                 <div
                   className="ql-editor"
@@ -171,11 +167,11 @@ export default function DisplayBoard({ initialData }: { initialData: any }) {
         </div>
 
         {panes.length > 1 && (
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
             {panes.map((_, index) => (
               <div
                 key={index}
-                className={`w-3 h-3 rounded-full transition-all ${
+                className={`w-2 h-2 rounded-full transition-all ${
                   index === currentIndex ? 'bg-white scale-125' : 'bg-white/50'
                 }`}
               />
