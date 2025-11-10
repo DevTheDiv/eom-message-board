@@ -332,6 +332,12 @@ const ReactQuill = dynamic(
                 if (node.hasAttribute('style')) {
                   let style = node.getAttribute('style') || ''
 
+                  // CRITICAL FIX: Remove width and height from inline style
+                  // The resize module needs to control size via attributes only
+                  // Inline styles take precedence over attributes, blocking resize
+                  style = style.replace(/width:\s*[^;]+;?/gi, '')
+                  style = style.replace(/height:\s*[^;]+;?/gi, '')
+
                   // Convert float-based alignment to display + margin
                   if (style.includes('float: left') || style.includes('float:left')) {
                     style = style.replace(/float:\s*left;?/g, 'display: block;')
@@ -346,7 +352,12 @@ const ReactQuill = dynamic(
                     }
                   }
 
-                  attributes.style = style
+                  // Clean up extra semicolons and whitespace
+                  style = style.replace(/;+/g, ';').replace(/^\s*;\s*/, '').trim()
+
+                  if (style) {
+                    attributes.style = style
+                  }
                 }
 
                 if (node.hasAttribute('alt')) {
