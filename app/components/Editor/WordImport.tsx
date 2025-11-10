@@ -53,7 +53,7 @@ export function WordImport({ onImport }: { onImport: (html: string) => void }) {
         throw new Error(data.error || 'Failed to convert document')
       }
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Docx import failed:', error)
       toast.error(error.message)
     } finally {

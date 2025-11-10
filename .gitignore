@@ -41,3 +41,11 @@ example-data/
 public/uploads/*
 !public/uploads/.gitkeep
 
+logs/
+
+# PM2
+.pm2/
+pids/
+*.pid
+*.seed
+*.pid.lock

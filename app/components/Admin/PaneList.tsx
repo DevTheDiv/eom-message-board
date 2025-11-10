@@ -3,14 +3,14 @@
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { Edit2, Trash2, GripVertical } from 'lucide-react'
 
-export function PaneList({ panes, onEdit, onDelete, onReorder }) {
-  const handleDragEnd = (result) => {
+export function PaneList({ panes, onEdit, onDelete, onReorder }: any) {
+  const handleDragEnd = (result: any) => {
     if (!result.destination) return
-    
-    const items = Array.from(panes)
+
+    const items: any[] = Array.from(panes)
     const [reorderedItem] = items.splice(result.source.index, 1)
     items.splice(result.destination.index, 0, reorderedItem)
-    
+
     onReorder(items.map(p => p.id))
   }
 
@@ -27,11 +27,11 @@ export function PaneList({ panes, onEdit, onDelete, onReorder }) {
       <h2 className="text-xl font-semibold mb-4">Message Panes</h2>
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="panes">
-          {(provided) => (
+          {(provided: any) => (
             <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-3">
-              {panes.map((pane, index) => (
+              {panes.map((pane: any, index: number) => (
                 <Draggable key={pane.id} draggableId={pane.id} index={index}>
-                  {(provided, snapshot) => (
+                  {(provided: any, snapshot: any) => (
                     <div
                       ref={provided.innerRef}
                       {...provided.draggableProps}

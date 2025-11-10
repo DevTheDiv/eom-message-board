@@ -8,8 +8,8 @@ import { toast } from 'sonner'
 import { Plus, Settings, Eye } from 'lucide-react'
 
 export default function AdminPage() {
-  const [panes, setPanes] = useState([])
-  const [selectedPane, setSelectedPane] = useState(null)
+  const [panes, setPanes] = useState<any[]>([])
+  const [selectedPane, setSelectedPane] = useState<any>(null)
   const [showSettings, setShowSettings] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
 
@@ -37,12 +37,12 @@ export default function AdminPage() {
     setIsEditing(true)
   }
 
-  const handleEditPane = (pane) => {
+  const handleEditPane = (pane: any) => {
     setSelectedPane(pane)
     setIsEditing(true)
   }
 
-  const handleSavePane = async (pane) => {
+  const handleSavePane = async (pane: any) => {
     try {
       const url = pane.id ? `/api/messages/${pane.id}` : '/api/messages'
       const method = pane.id ? 'PUT' : 'POST'
@@ -64,9 +64,9 @@ export default function AdminPage() {
     }
   }
 
-  const handleDeletePane = async (id) => {
+  const handleDeletePane = async (id: string) => {
     if (!confirm('Delete this pane?')) return
-    
+
     try {
       const res = await fetch(`/api/messages/${id}`, { method: 'DELETE' })
       if (res.ok) {
@@ -78,7 +78,7 @@ export default function AdminPage() {
     }
   }
 
-  const handleReorder = async (paneIds) => {
+  const handleReorder = async (paneIds: string[]) => {
     try {
       await fetch('/api/messages/reorder', {
         method: 'POST',

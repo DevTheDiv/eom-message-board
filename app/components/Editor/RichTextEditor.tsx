@@ -389,14 +389,19 @@ const ReactQuill = dynamic(
   { ssr: false } // This module must be client-side only
 )
 
-// This default export remains the same
-export default function RichTextEditor({ value, onChange }: { value: string, onChange: (value: string) => void }) {
+// This default export now forwards refs
+const RichTextEditor = forwardRef<any, { value: string, onChange: (value: string) => void }>((props, ref) => {
   return (
     <ReactQuill
+      ref={ref}
       theme="snow"
-      value={value}
-      onChange={onChange}
+      value={props.value}
+      onChange={props.onChange}
       // Modules are now passed by the wrapper
     />
   )
-}
+})
+
+RichTextEditor.displayName = 'RichTextEditor'
+
+export default RichTextEditor

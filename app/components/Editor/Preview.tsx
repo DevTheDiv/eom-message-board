@@ -86,7 +86,7 @@ export function Preview({ pane }) {
 
             {/* Content container */}
             <div className="flex-1 min-h-0 p-4">
-              <div className="bg-white/95 backdrop-blur rounded-lg shadow-2xl h-full flex flex-col overflow-hidden ql-snow">
+              <div className="h-full flex flex-col overflow-hidden ql-snow">
                 <div className="flex-1 p-3 overflow-y-auto overflow-x-hidden">
                   <div className="w-full max-w-full">
                     <div

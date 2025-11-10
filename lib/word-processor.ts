@@ -1,6 +1,7 @@
 // Use 'require' instead of 'import' for CommonJS compatibility on the server
 const mammoth = require('mammoth')
 const JSZip = require('jszip')
+const docx4js = require('docx4js')
 // 1. We remove the 'import { mammoth as mammothTypes }' line that was causing the error.
 
 import fs from 'fs/promises'
@@ -426,15 +427,16 @@ export async function convertDocxToHtml(buffer: Buffer): Promise<{
 
         imageConversionIndex++ // Move to next image
 
-        const extension = image.contentType.split('/')[1] || 'png'
-        const filename = `${uuidv4()}.${extension}`
-        const imagePath = path.join(process.cwd(), 'public', 'uploads', filename)
+        // Convert image to base64 data URI instead of saving to disk
+        // This ensures images work in both local and remote deployments
+        const base64 = imageBuffer.toString('base64')
+        const mimeType = image.contentType || 'image/png'
+        const dataUri = `data:${mimeType};base64,${base64}`
 
-        await fs.mkdir(path.dirname(imagePath), { recursive: true })
-        await fs.writeFile(imagePath, imageBuffer)
+        console.log('Converted image to base64 data URI, size:', base64.length, 'chars')
 
         return {
-          src: `/uploads/${filename}`
+          src: dataUri
         }
       } catch (error) {
         console.error("Failed to convert image in docx:", error);

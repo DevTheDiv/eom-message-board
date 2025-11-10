@@ -43,7 +43,11 @@ export default function DisplayBoard({ initialData }: { initialData: any }) {
         const res = await fetch('/api/messages')
         const data = await res.json()
         const newPanes = data.panes || []
-        setPanes(newPanes)
+
+        // Only update panes if they've actually changed
+        if (JSON.stringify(newPanes) !== JSON.stringify(panes)) {
+          setPanes(newPanes)
+        }
 
         // Reset index if current index is out of bounds
         if (newPanes.length > 0 && currentIndex >= newPanes.length) {
@@ -60,16 +64,40 @@ export default function DisplayBoard({ initialData }: { initialData: any }) {
     return () => {
       if (pollIntervalRef.current) clearInterval(pollIntervalRef.current)
     }
-  }, [currentIndex])
-
-  useEffect(() => {
-    if (panes.length > 0) {
-      startRotation()
-    }
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current)
-    }
   }, [currentIndex, panes])
+
+  // Handle pane rotation
+  useEffect(() => {
+    if (panes.length === 0) return
+    if (panes.length === 1) return // No need to rotate if only one pane
+
+    // Clear any existing timer
+    if (timerRef.current) {
+      clearTimeout(timerRef.current)
+    }
+
+    // Get duration for current pane
+    const duration = (panes[currentIndex]?.duration || 10) * 1000
+
+    // Set timer to transition to next pane
+    timerRef.current = setTimeout(() => {
+      setIsTransitioning(true)
+      setTimeout(() => {
+        setCurrentIndex((prev) => {
+          const nextIndex = (prev + 1) % panes.length
+          console.log(`Transitioning from pane ${prev} to ${nextIndex}`)
+          return nextIndex
+        })
+        setIsTransitioning(false)
+      }, 500)
+    }, duration)
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+      }
+    }
+  }, [currentIndex, panes.length])
 
   const loadData = async () => {
     try {
@@ -79,20 +107,6 @@ export default function DisplayBoard({ initialData }: { initialData: any }) {
     } catch (error) {
       console.error('Failed to load panes')
     }
-  }
-
-  const startRotation = () => {
-    if (timerRef.current) clearTimeout(timerRef.current)
-    if (panes.length === 0) return
-    
-    const duration = (panes[currentIndex]?.duration || 10) * 1000
-    timerRef.current = setTimeout(() => {
-      setIsTransitioning(true)
-      setTimeout(() => {
-        setCurrentIndex((prev) => (prev + 1) % panes.length)
-        setIsTransitioning(false)
-      }, 500)
-    }, duration)
   }
 
   if (panes.length === 0) {
@@ -154,7 +168,7 @@ export default function DisplayBoard({ initialData }: { initialData: any }) {
 
         {/* Content container - matches Preview exactly */}
         <div className="flex-1 min-h-0 p-4">
-          <div className="bg-white/95 backdrop-blur rounded-lg shadow-2xl h-full flex flex-col overflow-hidden ql-snow">
+          <div className="h-full flex flex-col overflow-hidden ql-snow">
             <div className="flex-1 p-3 overflow-y-auto overflow-x-hidden">
               <div className="w-full max-w-full">
                 <div

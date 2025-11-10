@@ -10,15 +10,15 @@ import type ReactQuill from 'react-quill'
 
 const RichTextEditor = dynamic(() => import('../Editor/RichTextEditor'), { ssr: false })
 
-export function PaneEditor({ pane, onSave, onClose }) {
-  const [editedPane, setEditedPane] = useState(pane)
+export function PaneEditor({ pane, onSave, onClose }: { pane: any, onSave: (pane: any) => void, onClose: () => void }) {
+  const [editedPane, setEditedPane] = useState<any>(pane)
   
   const quillRef = useRef<ReactQuill>(null)
   // Ref to track if the change originated from Quill itself
   const isQuillChange = useRef(false); 
 
   // Function to convert HTML to Quill's Delta format
-  const convertHtmlToDelta = useCallback((html) => {
+  const convertHtmlToDelta = useCallback((html: string) => {
     // We only run this on the client, where quillRef is available
     if (quillRef.current) {
       const editor = quillRef.current.getEditor();
@@ -152,6 +152,42 @@ export function PaneEditor({ pane, onSave, onClose }) {
                   min="1"
                   max="300"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Background Color</label>
+                <div className="flex gap-2 items-center">
+                  <input
+                    type="color"
+                    value={editedPane.background?.type === 'color' ? editedPane.background.value : '#ffffff'}
+                    onChange={(e) => setEditedPane({
+                      ...editedPane,
+                      background: { type: 'color', value: e.target.value }
+                    })}
+                    className="h-10 w-20 border rounded-lg cursor-pointer"
+                  />
+                  <input
+                    type="text"
+                    value={editedPane.background?.type === 'color' ? editedPane.background.value : '#ffffff'}
+                    onChange={(e) => setEditedPane({
+                      ...editedPane,
+                      background: { type: 'color', value: e.target.value }
+                    })}
+                    className="flex-1 px-4 py-2 border rounded-lg font-mono text-sm"
+                    placeholder="#ffffff"
+                    pattern="^#[0-9A-Fa-f]{6}$"
+                  />
+                  <button
+                    onClick={() => setEditedPane({
+                      ...editedPane,
+                      background: { type: 'color', value: '#ffffff' }
+                    })}
+                    className="px-3 py-2 text-sm border rounded-lg hover:bg-gray-50"
+                  >
+                    Reset
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">Choose a background color for this pane</p>
               </div>
 
               <WordImport onImport={(html) => {
